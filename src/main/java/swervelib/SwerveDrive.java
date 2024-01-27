@@ -437,7 +437,7 @@ public class SwerveDrive
     // https://www.chiefdelphi.com/t/whitepaper-swerve-drive-skew-and-second-order-kinematics/416964/5
     if (chassisVelocityCorrection)
     {
-      velocity = ChassisSpeeds.discretize(velocity, 0.02);
+    //  velocity = ChassisSpeeds.discretize(velocity, 0.02);
     }
 
     // Heading Angular Velocity Deadband, might make a configuration option later.
