@@ -72,32 +72,32 @@ public class AbsoluteDrive extends Command
 
     // Get the desired chassis speeds based on a 2 joystick module.
     ChassisSpeeds desiredSpeeds = swerve.getTargetSpeeds(vX.getAsDouble(), vY.getAsDouble(),
-                                                         headingHorizontal.getAsDouble(),
-                                                         headingVertical.getAsDouble());
+            headingHorizontal.getAsDouble(),
+            headingVertical.getAsDouble());
 
     // Prevent Movement After Auto
-    /*if(initRotation)
+    if (initRotation)
     {
-      if(headingHorizontal.getAsDouble() == 0 && headingVertical.getAsDouble() == 0)
+      if (headingHorizontal.getAsDouble() == 0 && headingVertical.getAsDouble() == 0)
       {
         // Get the curretHeading
         Rotation2d firstLoopHeading = swerve.getHeading();
-      
+
         // Set the Current Heading to the desired Heading
         desiredSpeeds = swerve.getTargetSpeeds(0, 0, firstLoopHeading.getSin(), firstLoopHeading.getCos());
       }
       //Dont Init Rotation Again
       initRotation = false;
-    }*/
+    }
 
     // Limit velocity to prevent tippy
     Translation2d translation = SwerveController.getTranslation2d(desiredSpeeds);
-    /*translation = SwerveMath.limitVelocity(translation, swerve.getFieldVelocity(), swerve.getPose(),
-                                           Constants.LOOP_TIME, Constants.ROBOT_MASS, List.of(Constants.CHASSIS),
-                                           swerve.getSwerveDriveConfiguration());
+    translation = SwerveMath.limitVelocity(translation, swerve.getFieldVelocity(), swerve.getPose(),
+            Constants.LOOP_TIME, Constants.ROBOT_MASS, List.of(Constants.CHASSIS),
+            swerve.getSwerveDriveConfiguration());
     SmartDashboard.putNumber("LimitedTranslation", translation.getX());
     SmartDashboard.putString("Translation", translation.toString());
-*/
+
     // Make the robot move
     swerve.drive(translation, desiredSpeeds.omegaRadiansPerSecond, true);
 
