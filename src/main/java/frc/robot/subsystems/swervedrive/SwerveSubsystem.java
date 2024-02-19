@@ -10,11 +10,14 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.ReplanningConfig;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -25,7 +28,10 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Config;
 import frc.robot.Constants.AutonConstants;
 import java.io.File;
 import java.util.function.DoubleSupplier;
+
+import frc.robot.subsystems.vision.Vision;
 import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.targeting.PhotonPipelineResult;
 import swervelib.SwerveController;
 import swervelib.SwerveDrive;
@@ -54,6 +60,7 @@ public class SwerveSubsystem extends SubsystemBase
    *
    * @param directory Directory of swerve drive config files.
    */
+
   public SwerveSubsystem(File directory)
   {
     // Angle conversion factor is 360 / (GEAR RATIO * ENCODER RESOLUTION)
@@ -84,6 +91,7 @@ public class SwerveSubsystem extends SubsystemBase
     swerveDrive.setHeadingCorrection(false); // Heading correction should only be used while controlling the robot via angle.
     swerveDrive.setCosineCompensator(!SwerveDriveTelemetry.isSimulation); // Disables cosine compensation for simulations since it causes discrepancies not seen in real life.
     setupPathPlanner();
+
   }
 
   /**
@@ -136,10 +144,10 @@ public class SwerveSubsystem extends SubsystemBase
    * @param camera {@link PhotonCamera} to communicate with.
    * @return A {@link Command} which will run the alignment.
    */
-  public Command aimAtTarget(PhotonCamera camera)
+  public Command aimAtTarget(Vision vision)
   {
     return run(() -> {
-      PhotonPipelineResult result = camera.getLatestResult();
+      PhotonPipelineResult result = vision.getLatestResult();
       if (result.hasTargets())
       {
         drive(getTargetSpeeds(0,
@@ -504,4 +512,8 @@ public class SwerveSubsystem extends SubsystemBase
   {
     swerveDrive.addVisionMeasurement(new Pose2d(3, 3, Rotation2d.fromDegrees(65)), Timer.getFPGATimestamp());
   }
+
+  public void addVisionMeasurement(Pose2d measurement, double timeStamp, Matrix<N3, N1> StdDev){
+    swerveDrive.addVisionMeasurement(measurement, timeStamp, StdDev);
+}
 }
