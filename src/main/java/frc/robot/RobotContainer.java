@@ -22,8 +22,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.climber.ClimbCommand;
 import frc.robot.commands.climber.DescendCommand;
+import frc.robot.commands.shooter.ShootCommand;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.vision.Vision;
 import org.photonvision.PhotonCamera;
@@ -46,6 +48,7 @@ public class RobotContainer
                                                                   "swerve"));
 Vision vision = new Vision(drivebase);
   ClimberSubsystem climber = new ClimberSubsystem();
+  ShooterSubsystem shooter  = new ShooterSubsystem();
   // CommandJoystick rotationController = new CommandJoystick(1);
   // Replace with CommandPS4Controller or CommandJoystick if needed
   CommandJoystick driverController = new CommandJoystick(1);
@@ -120,6 +123,7 @@ Vision vision = new Vision(drivebase);
     new JoystickButton(driverXbox, 1).onTrue(new InstantCommand(() -> drivebase.aimAtTarget(vision).schedule(), drivebase));
     new JoystickButton(driverXbox, 5).whileTrue(new ClimbCommand(climber));
     new JoystickButton(driverXbox, 6).whileTrue(new DescendCommand(climber));
+    new JoystickButton(driverXbox, 7).whileTrue(new ShootCommand(shooter));
 
 //    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
   }

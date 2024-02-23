@@ -26,6 +26,7 @@ public final class Constants
     public static final int SHOOTER_LOADER_ID=1;
     public static final int TRAP_MOTOR_ID=1;
     public static final int INTAKE_ID = 2;
+    public static final int INTAKE_LIMIT_SWITCH_PORT=0;
 
 
   }
@@ -34,6 +35,14 @@ public final class Constants
       public static double P = 0.002;
       public static double I = 0;
       public static double D = 0;
+
+    }
+    public static final class ShooterPIDConstants {
+      public static double P = 0.002;
+      public static double I = 0;
+      public static double D = 0;
+
+      public static double SHOOTER_SETPOINT;
     }
   }
 

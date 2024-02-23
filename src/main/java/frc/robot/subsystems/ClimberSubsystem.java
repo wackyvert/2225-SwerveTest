@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -16,28 +17,35 @@ public class ClimberSubsystem extends SubsystemBase {
     PIDController climberPID = new PIDController(Constants.PIDFConstants.ClimberPIDConstants.P, Constants.PIDFConstants.ClimberPIDConstants.I, Constants.PIDFConstants.ClimberPIDConstants.D );
 
     public TalonFX climber;
+    public TalonSRX armL;
+    public TalonSRX armR;
 
     // Motor controllers
 
-    public double getEncoders(){
+    public double getClimberPosition(){
         return climber.getPosition().getValueAsDouble();
-
+    }
+    public double getArmPosition(TalonSRX arm){
+        return arm.getSelectedSensorPosition();
     }
     public void zeroEncoders(){
+        //talonsrx is phoenix 5 and talonfx is phoenix 6
+        armL.setSelectedSensorPosition(0);
+        armR.setSelectedSensorPosition(0);
         climber.setPosition(0);
     }
 
     public void climb() {
-        if (getEncoders()<UPPER_STOP_POINT){
-        climber.set(climberPID.calculate(getEncoders(), UPPER_STOP_POINT));
+        if (getClimberPosition()<UPPER_STOP_POINT){
+        climber.set(climberPID.calculate(getClimberPosition(), UPPER_STOP_POINT));
         } else {
             stop();
         }
     }
 
     public void descend() {
-        if (getEncoders()>LOWER_STOP_POINT){
-            climber.set(climberPID.calculate(getEncoders(), UPPER_STOP_POINT));
+        if (getClimberPosition()>LOWER_STOP_POINT){
+            climber.set(climberPID.calculate(getClimberPosition(), UPPER_STOP_POINT));
         } else {
             stop();
         }
