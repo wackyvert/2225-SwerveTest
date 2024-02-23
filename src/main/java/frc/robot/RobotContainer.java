@@ -20,7 +20,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.climber.ClimbCommand;
+import frc.robot.commands.climber.DescendCommand;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.vision.Vision;
 import org.photonvision.PhotonCamera;
@@ -42,6 +45,7 @@ public class RobotContainer
   public final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                   "swerve"));
 Vision vision = new Vision(drivebase);
+  ClimberSubsystem climber = new ClimberSubsystem();
   // CommandJoystick rotationController = new CommandJoystick(1);
   // Replace with CommandPS4Controller or CommandJoystick if needed
   CommandJoystick driverController = new CommandJoystick(1);
@@ -58,7 +62,7 @@ Vision vision = new Vision(drivebase);
   public RobotContainer() throws IOException
   {// Configure the trigger bindings
     configureBindings();
-
+    climber.zeroEncoders();
     AbsoluteDriveAdv closedAbsoluteDriveAdv = new AbsoluteDriveAdv(drivebase,
             () -> MathUtil.applyDeadband(driverXbox.getLeftY(),
                     OperatorConstants.LEFT_Y_DEADBAND),
@@ -112,10 +116,11 @@ Vision vision = new Vision(drivebase);
   private void configureBindings()
   {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-
-    new JoystickButton(driverXbox, 4).onTrue((new InstantCommand(drivebase::zeroGyro)));
-    new JoystickButton(driverXbox, 3).onTrue(new InstantCommand(drivebase::addFakeVisionReading));
+    new JoystickButton(driverXbox, 2).onTrue(new InstantCommand(drivebase::lock, drivebase));
     new JoystickButton(driverXbox, 1).onTrue(new InstantCommand(() -> drivebase.aimAtTarget(vision).schedule(), drivebase));
+    new JoystickButton(driverXbox, 5).whileTrue(new ClimbCommand(climber));
+    new JoystickButton(driverXbox, 6).whileTrue(new DescendCommand(climber));
+
 //    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
   }
 

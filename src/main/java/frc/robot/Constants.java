@@ -8,7 +8,6 @@ import com.pathplanner.lib.util.PIDConstants;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import swervelib.math.Matter;
-import swervelib.parser.PIDFConfig;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean constants. This
@@ -20,6 +19,23 @@ import swervelib.parser.PIDFConfig;
  */
 public final class Constants
 {
+  public static final class MotorConstants{
+    public static int CLIMBER_ID=0;
+    public static final int SHOOTER_L_ID = 1;
+    public static final int SHOOTER_R_ID = 1;
+    public static final int SHOOTER_LOADER_ID=1;
+    public static final int TRAP_MOTOR_ID=1;
+    public static final int INTAKE_ID = 2;
+
+
+  }
+  public static final class PIDFConstants {
+    public static final class ClimberPIDConstants {
+      public static double P = 0.002;
+      public static double I = 0;
+      public static double D = 0;
+    }
+  }
 
   public static final double ROBOT_MASS = (148 - 20.3) * 0.453592; // 32lbs * kg per pound
   public static final Matter CHASSIS    = new Matter(new Translation3d(0, 0, Units.inchesToMeters(8)), ROBOT_MASS);

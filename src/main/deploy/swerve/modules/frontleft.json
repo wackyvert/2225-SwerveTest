@@ -5,7 +5,7 @@
   },
   "absoluteEncoderOffset": 264,
   "drive": {
-    "type": "falcon",
+    "type": "sparkflex",
     "id": 7,
     "canbus": null
   },
