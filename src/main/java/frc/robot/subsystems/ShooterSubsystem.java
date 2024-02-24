@@ -15,11 +15,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
 
     // Shooter motors
-    private final CANSparkMax shooterMotor1 = new CANSparkMax(1, CANSparkMax.MotorType.kBrushless);
-    private final CANSparkMax shooterMotor2 = new CANSparkMax(2, CANSparkMax.MotorType.kBrushless);
+    private final CANSparkMax shooterMotor1 = new CANSparkMax(Constants.MotorConstants.SHOOTER_L_ID, CANSparkMax.MotorType.kBrushless);
+    private final CANSparkMax shooterMotor2 = new CANSparkMax(Constants.MotorConstants.SHOOTER_R_ID, CANSparkMax.MotorType.kBrushless);
 
     // Feeder motor
-    private final TalonSRX feederMotor = new TalonSRX(3);
+    private final TalonSRX feederMotor = new TalonSRX(Constants.MotorConstants.SHOOTER_LOADER_ID);
 
     // Encoders
 
@@ -29,6 +29,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private final PIDController shooterPIDController2 = new PIDController(0,0,0);
 
     public ShooterSubsystem() {
+        shooterMotor2.setInverted(true);
+        shooterMotor1.setInverted(true);
         shooterPIDController1.setTolerance(100, 100);
         shooterPIDController1.setP(Constants.PIDFConstants.ShooterPIDConstants.P);
         shooterPIDController1.setI(Constants.PIDFConstants.ShooterPIDConstants.I);
@@ -53,10 +55,10 @@ public class ShooterSubsystem extends SubsystemBase {
         }
     }
     public void shoot() {
-        shooterMotor1.set(shooterPIDController1.calculate(getEncoderSpeed(shooterMotor1), Constants.PIDFConstants.ShooterPIDConstants.SHOOTER_SETPOINT));
+        shooterMotor1.set(-shooterPIDController1.calculate(getEncoderSpeed(shooterMotor1), Constants.PIDFConstants.ShooterPIDConstants.SHOOTER_SETPOINT));
         shooterMotor2.set(shooterPIDController2.calculate(getEncoderSpeed(shooterMotor2), Constants.PIDFConstants.ShooterPIDConstants.SHOOTER_SETPOINT));
         if(readyToFire(shooterMotor1)&&readyToFire(shooterMotor2)){
-           feed();
+           //feed();
         }
     }
 

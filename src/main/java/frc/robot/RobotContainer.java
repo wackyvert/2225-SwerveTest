@@ -119,11 +119,11 @@ Vision vision = new Vision(drivebase);
   private void configureBindings()
   {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    new JoystickButton(driverXbox, 2).onTrue(new InstantCommand(drivebase::lock, drivebase));
-    new JoystickButton(driverXbox, 1).onTrue(new InstantCommand(() -> drivebase.aimAtTarget(vision).schedule(), drivebase));
-    new JoystickButton(driverXbox, 5).whileTrue(new ClimbCommand(climber));
-    new JoystickButton(driverXbox, 6).whileTrue(new DescendCommand(climber));
-    new JoystickButton(driverXbox, 7).whileTrue(new ShootCommand(shooter));
+    //new JoystickButton(driverXbox, 10).onTrue(new InstantCommand(drivebase::lock, drivebase));
+    //new JoystickButton(driverXbox, 1).onTrue(new InstantCommand(() -> drivebase.aimAtTarget(vision).schedule(), drivebase));
+    //new JoystickButton(driverXbox, 5).whileTrue(new ClimbCommand(climber));
+    //new JoystickButton(driverXbox, 6).whileTrue(new DescendCommand(climber));
+    new JoystickButton(driverXbox, 1).whileTrue(new ShootCommand(shooter));
 
 //    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
   }

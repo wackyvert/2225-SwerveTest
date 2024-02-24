@@ -14,6 +14,8 @@ import frc.robot.Constants;
 public class IntakeSubsystem extends SubsystemBase {
     private final TalonSRX intakeMotor = new TalonSRX(Constants.MotorConstants.INTAKE_ID);
     private final DigitalInput limitSwitch = new DigitalInput(Constants.MotorConstants.INTAKE_LIMIT_SWITCH_PORT);
+    public TalonSRX armL;
+    public TalonSRX armR;
 
     public void intake() {
         // If the limit switch is not engaged, run the motor forward, intake the ring
@@ -23,7 +25,9 @@ public class IntakeSubsystem extends SubsystemBase {
             intakeMotor.set(ControlMode.PercentOutput, 0.0);
         }
     }
-
+    public double getArmPosition(TalonSRX arm){
+        return arm.getSelectedSensorPosition();
+    }
     public void reverse() {
         // If the limit switch is not engaged, run the motor in reverse
         if (!limitSwitch.get()) {
@@ -39,6 +43,8 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public IntakeSubsystem() {
+        armL=new TalonSRX(Constants.MotorConstants.ARM_L_ID);
+        armR=new TalonSRX(Constants.MotorConstants.ARM_R_ID);
         // TODO: Set the default command, if any, for this subsystem by calling setDefaultCommand(command)
         //       in the constructor or in the robot coordination class, such as RobotContainer.
     }

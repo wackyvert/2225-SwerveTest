@@ -17,21 +17,16 @@ public class ClimberSubsystem extends SubsystemBase {
     PIDController climberPID = new PIDController(Constants.PIDFConstants.ClimberPIDConstants.P, Constants.PIDFConstants.ClimberPIDConstants.I, Constants.PIDFConstants.ClimberPIDConstants.D );
 
     public TalonFX climber;
-    public TalonSRX armL;
-    public TalonSRX armR;
-
+    
     // Motor controllers
 
     public double getClimberPosition(){
         return climber.getPosition().getValueAsDouble();
     }
-    public double getArmPosition(TalonSRX arm){
-        return arm.getSelectedSensorPosition();
-    }
+    
     public void zeroEncoders(){
         //talonsrx is phoenix 5 and talonfx is phoenix 6
-        armL.setSelectedSensorPosition(0);
-        armR.setSelectedSensorPosition(0);
+        
         climber.setPosition(0);
     }
 
@@ -60,6 +55,7 @@ public class ClimberSubsystem extends SubsystemBase {
         climberConfig.Feedback.SensorToMechanismRatio=(1.0/2048);
         climberConfig.MotorOutput.Inverted=InvertedValue.Clockwise_Positive;
         climber = new TalonFX(Constants.MotorConstants.CLIMBER_ID);
+        
         climber.getConfigurator().apply(climberConfig);
 
 
