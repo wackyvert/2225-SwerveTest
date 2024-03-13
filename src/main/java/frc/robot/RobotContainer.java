@@ -22,9 +22,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.climber.ClimbCommand;
 import frc.robot.commands.climber.DescendCommand;
+import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.commands.shooter.ShootCommand;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.vision.Vision;
@@ -46,13 +48,13 @@ public class RobotContainer
   // The robot's subsystems and commands are defined here...
   public final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                   "swerve"));
-Vision vision = new Vision(drivebase);
+//Vision vision = new Vision(drivebase);
   ClimberSubsystem climber = new ClimberSubsystem();
   ShooterSubsystem shooter  = new ShooterSubsystem();
   // CommandJoystick rotationController = new CommandJoystick(1);
   // Replace with CommandPS4Controller or CommandJoystick if needed
   CommandJoystick driverController = new CommandJoystick(1);
-
+  IntakeSubsystem intake = new IntakeSubsystem();
   // CommandJoystick driverController   = new CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
   XboxController driverXbox = new XboxController(0);
   XboxController driverXbox2 = new XboxController(1);
@@ -86,7 +88,7 @@ Vision vision = new Vision(drivebase);
     Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
             () -> MathUtil.applyDeadband(driverXbox.getRawAxis(1), OperatorConstants.LEFT_Y_DEADBAND),
             () -> MathUtil.applyDeadband(driverXbox.getRawAxis(0), OperatorConstants.LEFT_X_DEADBAND),
-            () -> driverXbox2.getRawAxis(0),
+            () -> -driverXbox2.getRawAxis(0),
             () -> -driverXbox2.getRawAxis(1));
 
     // Applies deadbands and inverts controls because joysticks
@@ -121,10 +123,10 @@ Vision vision = new Vision(drivebase);
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     //new JoystickButton(driverXbox, 10).onTrue(new InstantCommand(drivebase::lock, drivebase));
     //new JoystickButton(driverXbox, 1).onTrue(new InstantCommand(() -> drivebase.aimAtTarget(vision).schedule(), drivebase));
-    //new JoystickButton(driverXbox, 5).whileTrue(new ClimbCommand(climber));
-    //new JoystickButton(driverXbox, 6).whileTrue(new DescendCommand(climber));
-    new JoystickButton(driverXbox, 1).whileTrue(new ShootCommand(shooter));
-
+    new JoystickButton(driverXbox, 5).whileTrue(new ClimbCommand(climber));
+    new JoystickButton(driverXbox, 6).whileTrue(new DescendCommand(climber));
+    //new JoystickButton(driverXbox, 1).whileTrue(new ShootCommand(shooter));
+      new JoystickButton(driverXbox, 1).whileTrue(new IntakeCommand(intake));
 //    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
   }
 

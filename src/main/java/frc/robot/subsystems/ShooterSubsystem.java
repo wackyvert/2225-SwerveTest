@@ -55,11 +55,9 @@ public class ShooterSubsystem extends SubsystemBase {
         }
     }
     public void shoot() {
-        shooterMotor1.set(-shooterPIDController1.calculate(getEncoderSpeed(shooterMotor1), Constants.PIDFConstants.ShooterPIDConstants.SHOOTER_SETPOINT));
-        shooterMotor2.set(shooterPIDController2.calculate(getEncoderSpeed(shooterMotor2), Constants.PIDFConstants.ShooterPIDConstants.SHOOTER_SETPOINT));
-        if(readyToFire(shooterMotor1)&&readyToFire(shooterMotor2)){
-           //feed();
-        }
+        shooterMotor1.set(-.9);
+        shooterMotor2.set(.9);
+        feed();
     }
 
     public void stopShooter() {
@@ -72,7 +70,7 @@ public class ShooterSubsystem extends SubsystemBase {
        return motor.getEncoder().getVelocity();
     }
     public void feed(){
-        feederMotor.set(ControlMode.PercentOutput, .3);
+        feederMotor.set(ControlMode.PercentOutput, .5);
     }
 
     @Override

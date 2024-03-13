@@ -6,13 +6,14 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class ClimberSubsystem extends SubsystemBase {
     //Encoder stops - Dividing output by 2048 (talonFx cpr) to have more reasonable numbers
-    final double LOWER_STOP_POINT=0;
-    final double UPPER_STOP_POINT=10;
+    final double LOWER_STOP_POINT= Constants.MotorConstants.UPPER_STOP_POINT;
+    final double UPPER_STOP_POINT=Constants.MotorConstants.UPPER_STOP_POINT;
 //this is intentionally set ridiculously low as untested mechanism dont want to break before we can figure out what speed is best
     PIDController climberPID = new PIDController(Constants.PIDFConstants.ClimberPIDConstants.P, Constants.PIDFConstants.ClimberPIDConstants.I, Constants.PIDFConstants.ClimberPIDConstants.D );
 
@@ -32,7 +33,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
     public void climb() {
         if (getClimberPosition()<UPPER_STOP_POINT){
-        climber.set(climberPID.calculate(getClimberPosition(), UPPER_STOP_POINT));
+        climber.set(.05);
         } else {
             stop();
         }
@@ -40,7 +41,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
     public void descend() {
         if (getClimberPosition()>LOWER_STOP_POINT){
-            climber.set(climberPID.calculate(getClimberPosition(), UPPER_STOP_POINT));
+            climber.set(-.05);
         } else {
             stop();
         }
@@ -52,7 +53,7 @@ public class ClimberSubsystem extends SubsystemBase {
     }
     public ClimberSubsystem() {
         TalonFXConfiguration climberConfig = new TalonFXConfiguration();
-        climberConfig.Feedback.SensorToMechanismRatio=(1.0/2048);
+      //  climberConfig.Feedback.SensorToMechanismRatio=(1.0/2048);
         climberConfig.MotorOutput.Inverted=InvertedValue.Clockwise_Positive;
         climber = new TalonFX(Constants.MotorConstants.CLIMBER_ID);
         
@@ -63,7 +64,7 @@ public class ClimberSubsystem extends SubsystemBase {
     }
     @Override
     public void periodic(){
-
+        SmartDashboard.putNumber("elevator encoder", climber.getPosition().getValueAsDouble());
     }
 
 }

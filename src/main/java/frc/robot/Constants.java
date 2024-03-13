@@ -20,21 +20,22 @@ import swervelib.math.Matter;
 public final class Constants
 {
   public static final class MotorConstants{
-    public static int CLIMBER_ID=19;
+    public static int CLIMBER_ID=24;
     public static int ARM_L_ID=17;
     public static int ARM_R_ID=16;
     public static final int SHOOTER_L_ID = 21;
-    public static final int SHOOTER_R_ID = 18;
+    public static final int SHOOTER_R_ID = 34;
     public static final int SHOOTER_LOADER_ID=15;
     public static final int TRAP_MOTOR_ID=23;
-    public static final int INTAKE_ID = 24;
+    public static final int INTAKE_ID = 18;
     public static final int INTAKE_LIMIT_SWITCH_PORT=0;
-
+   public static final double LOWER_STOP_POINT=10;
+    public static final double UPPER_STOP_POINT=65;
 
   }
   public static final class PIDFConstants {
     public static final class ClimberPIDConstants {
-      public static double P = 0.002;
+      public static double P = 0.02;
       public static double I = 0;
       public static double D = 0;
 
@@ -44,7 +45,7 @@ public final class Constants
       public static double I = 0;
       public static double D = 0;
 
-      public static double SHOOTER_SETPOINT=1000;
+      public static double SHOOTER_SETPOINT=3000;
     }
   }
 
