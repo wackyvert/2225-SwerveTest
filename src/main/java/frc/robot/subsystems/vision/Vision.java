@@ -2,6 +2,7 @@ package frc.robot.subsystems.vision;
 
 
 
+import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
@@ -13,6 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import java.util.Optional;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import org.photonvision.EstimatedRobotPose;
@@ -23,6 +25,7 @@ import org.photonvision.simulation.PhotonCameraSim;
 import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class Vision extends SubsystemBase {
     private final PhotonCamera camera;
@@ -111,7 +114,25 @@ public class Vision extends SubsystemBase {
      *
      * @TODO:  tune real std dev values <a href="https://docs.photonvision.org/en/latest/docs/calibration/calibration.html#take-at-calibration-images-from-various-angles">...</a>
      */
-
+    public boolean inRangeOfGivenAprilTag(int[] tagIDs){   // Now it takes an array of integers
+        boolean hasSelectedTarget = false;
+        var result = camera.getLatestResult();
+        if(result.hasTargets()){
+            for(PhotonTrackedTarget target:result.getTargets()){
+                for (int tagID : tagIDs) { // Iterating over each integer in the array
+                    if(target.getFiducialId() == tagID){
+                        double distanceToTarget = target.getBestCameraToTarget().getZ();
+                        if(distanceToTarget>= Constants.minShootTargetThreshold&&distanceToTarget<=Constants.maxShootTargetThreshold)
+                        {
+                            hasSelectedTarget = true;
+                        }
+                        break; // If we found a target, no need to check the remaining tagIDs
+                    }
+                }
+            }
+        }
+        return hasSelectedTarget;
+    }
     @Override
     public void periodic()
     {

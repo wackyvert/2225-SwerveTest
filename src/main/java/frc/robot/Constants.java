@@ -19,7 +19,10 @@ import swervelib.math.Matter;
  */
 public final class Constants
 {
-  public static final class MotorConstants{
+    public static int CANdleID=44;
+    public static final int minShootTargetThreshold=0;
+    public static final int maxShootTargetThreshold=1000;
+    public static final class MotorConstants{
     public static int CLIMBER_ID=24;
     public static int ARM_L_ID=17;
     public static int ARM_R_ID=16;

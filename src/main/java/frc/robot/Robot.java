@@ -107,9 +107,11 @@ public class Robot extends TimedRobot
   @Override
   public void autonomousInit()
   {
+
     m_robotContainer.setMotorBrake(false);
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
+//setting here to allow time to grab alliance and invert controls if necessary, yagsl pathplanner bug
+    m_robotContainer.setDefaultCommand();
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null)
     {
@@ -136,7 +138,7 @@ public class Robot extends TimedRobot
     {
       m_autonomousCommand.cancel();
     }
-    m_robotContainer.setDriveMode();
+
     
     m_robotContainer.intake.zeroEncoders();
     m_robotContainer.setMotorBrake(false);

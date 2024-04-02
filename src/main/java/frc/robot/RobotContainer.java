@@ -4,12 +4,14 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
@@ -27,12 +29,14 @@ import frc.robot.commands.intake.DropIntake;
 import frc.robot.commands.intake.IntakeCommand;
 import frc.robot.commands.intake.OutttakeCommand;
 import frc.robot.commands.intake.RaiseIntake;
+import frc.robot.commands.lights.LightsInRange;
 import frc.robot.commands.shooter.ShootCommand;
 import frc.robot.commands.shooter.TrapAmp;
 import frc.robot.commands.shooter.TrapAmpSlowShoot;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LightSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import frc.robot.subsystems.vision.Vision;
@@ -41,6 +45,7 @@ import org.photonvision.PhotonPoseEstimator;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -54,7 +59,8 @@ public class RobotContainer
   // The robot's subsystems and commands are defined here...
   public final SwerveSubsystem drivebase = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                   "swerve"));
-//Vision vision = new Vision(drivebase);
+  Vision vision = new Vision(drivebase);
+  LightSubsystem lights = new LightSubsystem();
   ClimberSubsystem climber = new ClimberSubsystem();
   ShooterSubsystem shooter  = new ShooterSubsystem();
   // CommandJoystick rotationController = new CommandJoystick(1);
@@ -64,8 +70,8 @@ public class RobotContainer
   // CommandJoystick driverController   = new CommandJoystick(3);//(OperatorConstants.DRIVER_CONTROLLER_PORT);
   XboxController driverXbox = new XboxController(0);
   XboxController driverXbox2 = new XboxController(1);
-
-
+  Command driveFieldOrientedDirectAngle;
+  Command driveFieldOrientedDirectAngleSim;
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    * @throws IOException
@@ -73,6 +79,11 @@ public class RobotContainer
   public RobotContainer() throws IOException
   {// Configure the trigger bindings
     configureBindings();
+
+//    PathPlanner Config
+    NamedCommands.registerCommand("ShootCommand", new ShootCommand(shooter));
+
+
    // climber.zeroEncoders();
     AbsoluteDriveAdv closedAbsoluteDriveAdv = new AbsoluteDriveAdv(drivebase,
             () -> MathUtil.applyDeadband(driverXbox.getLeftY(),
@@ -91,13 +102,25 @@ public class RobotContainer
     // controls are front-left positive
     // left stick controls translation
     // right stick controls the desired angle NOT angular rotation
-    Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
-            () -> MathUtil.applyDeadband(-driverXbox.getRawAxis(1), OperatorConstants.LEFT_Y_DEADBAND),
-            () -> MathUtil.applyDeadband(-driverXbox.getRawAxis(0), OperatorConstants.LEFT_X_DEADBAND),
-            () -> -driverXbox2.getRawAxis(0),
-            () -> -driverXbox2.getRawAxis(1));
 
-    // Applies deadbands and inverts controls because joysticks
+    Optional<DriverStation.Alliance> ally = DriverStation.getAlliance();
+    if (ally.isPresent() && ally.get() == DriverStation.Alliance.Red) {
+          driveFieldOrientedDirectAngle= drivebase.driveCommand(
+              () -> MathUtil.applyDeadband(driverXbox.getRawAxis(1), OperatorConstants.LEFT_Y_DEADBAND),
+              () -> MathUtil.applyDeadband(driverXbox.getRawAxis(0), OperatorConstants.LEFT_X_DEADBAND),
+              () -> -driverXbox2.getRawAxis(0),
+              () -> -driverXbox2.getRawAxis(1));
+      }
+    else {
+      driveFieldOrientedDirectAngle= drivebase.driveCommand(
+              () -> MathUtil.applyDeadband(-driverXbox.getRawAxis(1), OperatorConstants.LEFT_Y_DEADBAND),
+              () -> MathUtil.applyDeadband(-driverXbox.getRawAxis(0), OperatorConstants.LEFT_X_DEADBAND),
+              () -> -driverXbox2.getRawAxis(0),
+              () -> -driverXbox2.getRawAxis(1));
+    }
+
+
+    /*// Applies deadbands and inverts controls because joysticks
     // are back-right positive while robot
     // controls are front-left positive
     // left stick controls translation
@@ -106,15 +129,18 @@ public class RobotContainer
     Command driveFieldOrientedAnglularVelocity = drivebase.driveCommand(
             () -> MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
             () -> MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
-            () -> driverXbox.getRawAxis(2));
+            () -> driverXbox.getRawAxis(2));*/
 
-    Command driveFieldOrientedDirectAngleSim = drivebase.simDriveCommand(
+    driveFieldOrientedDirectAngleSim = drivebase.simDriveCommand(
             () -> MathUtil.applyDeadband(-driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
             () -> MathUtil.applyDeadband(-driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
             () -> driverXbox.getRawAxis(2));
 
+     }
+  public void setDefaultCommand(){
     drivebase.setDefaultCommand(
             !RobotBase.isSimulation() ? driveFieldOrientedDirectAngle : driveFieldOrientedDirectAngleSim);
+  lights.setDefaultCommand(new LightsInRange(vision, lights));
   }
 
   /**
@@ -173,10 +199,7 @@ public class RobotContainer
     }
     else return new double[]{0,0};
   }
-  public void setDriveMode()
-  {
-    //drivebase.setDefaultCommand();
-  }
+
 
   public void setMotorBrake(boolean brake)
   {
