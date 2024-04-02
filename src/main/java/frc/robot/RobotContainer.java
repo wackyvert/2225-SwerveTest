@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -22,8 +23,13 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.climber.ClimbCommand;
 import frc.robot.commands.climber.DescendCommand;
+import frc.robot.commands.intake.DropIntake;
 import frc.robot.commands.intake.IntakeCommand;
+import frc.robot.commands.intake.OutttakeCommand;
+import frc.robot.commands.intake.RaiseIntake;
 import frc.robot.commands.shooter.ShootCommand;
+import frc.robot.commands.shooter.TrapAmp;
+import frc.robot.commands.shooter.TrapAmpSlowShoot;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -67,7 +73,7 @@ public class RobotContainer
   public RobotContainer() throws IOException
   {// Configure the trigger bindings
     configureBindings();
-    climber.zeroEncoders();
+   // climber.zeroEncoders();
     AbsoluteDriveAdv closedAbsoluteDriveAdv = new AbsoluteDriveAdv(drivebase,
             () -> MathUtil.applyDeadband(driverXbox.getLeftY(),
                     OperatorConstants.LEFT_Y_DEADBAND),
@@ -86,8 +92,8 @@ public class RobotContainer
     // left stick controls translation
     // right stick controls the desired angle NOT angular rotation
     Command driveFieldOrientedDirectAngle = drivebase.driveCommand(
-            () -> MathUtil.applyDeadband(driverXbox.getRawAxis(1), OperatorConstants.LEFT_Y_DEADBAND),
-            () -> MathUtil.applyDeadband(driverXbox.getRawAxis(0), OperatorConstants.LEFT_X_DEADBAND),
+            () -> MathUtil.applyDeadband(-driverXbox.getRawAxis(1), OperatorConstants.LEFT_Y_DEADBAND),
+            () -> MathUtil.applyDeadband(-driverXbox.getRawAxis(0), OperatorConstants.LEFT_X_DEADBAND),
             () -> -driverXbox2.getRawAxis(0),
             () -> -driverXbox2.getRawAxis(1));
 
@@ -103,8 +109,8 @@ public class RobotContainer
             () -> driverXbox.getRawAxis(2));
 
     Command driveFieldOrientedDirectAngleSim = drivebase.simDriveCommand(
-            () -> MathUtil.applyDeadband(driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
-            () -> MathUtil.applyDeadband(driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
+            () -> MathUtil.applyDeadband(-driverXbox.getLeftY(), OperatorConstants.LEFT_Y_DEADBAND),
+            () -> MathUtil.applyDeadband(-driverXbox.getLeftX(), OperatorConstants.LEFT_X_DEADBAND),
             () -> driverXbox.getRawAxis(2));
 
     drivebase.setDefaultCommand(
@@ -123,10 +129,15 @@ public class RobotContainer
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     //new JoystickButton(driverXbox, 10).onTrue(new InstantCommand(drivebase::lock, drivebase));
     //new JoystickButton(driverXbox, 1).onTrue(new InstantCommand(() -> drivebase.aimAtTarget(vision).schedule(), drivebase));
-    new JoystickButton(driverXbox, 5).whileTrue(new ClimbCommand(climber));
-    new JoystickButton(driverXbox, 6).whileTrue(new DescendCommand(climber));
-    //new JoystickButton(driverXbox, 1).whileTrue(new ShootCommand(shooter));
-      new JoystickButton(driverXbox, 1).whileTrue(new IntakeCommand(intake));
+    new JoystickButton(driverXbox, 3).whileTrue(new RaiseIntake(intake));
+    new JoystickButton(driverXbox, 4).whileTrue(new DropIntake(intake));
+    new JoystickButton(driverXbox2, 3).whileTrue(new ClimbCommand(climber));
+    new JoystickButton(driverXbox2, 4).whileTrue(new DescendCommand(climber));
+    new JoystickButton(driverXbox2, 1).whileTrue(new ShootCommand(shooter));
+    new JoystickButton(driverXbox2, 5).whileTrue(new TrapAmpSlowShoot(shooter));
+    new JoystickButton(driverXbox2, 2).whileTrue(new TrapAmp(shooter));
+    new JoystickButton(driverXbox, 1).whileTrue(new IntakeCommand(intake));
+      new JoystickButton(driverXbox, 2).whileTrue(new OutttakeCommand(intake));
 //    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
   }
 
@@ -138,7 +149,7 @@ public class RobotContainer
   public Command getAutonomousCommand()
   {
     //return null;
-    return drivebase.getAutonomousCommand("Example Path");
+    return drivebase.getAutonomousCommand("New Auto");
   }
   public double[] convertPOVtoJoystick(){
     if (driverXbox.getPOV()==-1){

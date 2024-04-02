@@ -29,8 +29,10 @@ public final class Constants
     public static final int TRAP_MOTOR_ID=23;
     public static final int INTAKE_ID = 18;
     public static final int INTAKE_LIMIT_SWITCH_PORT=0;
-   public static final double LOWER_STOP_POINT=10;
-    public static final double UPPER_STOP_POINT=65;
+   public static final double LOWER_STOP_POINT=7;
+    public static final double UPPER_STOP_POINT=148;
+    public static double INTAKE_UPPER_STOP_POINT=100000000;//need to set!!
+    public static double INTAKE_LOWER_STOP_POINT=1;
 
   }
   public static final class PIDFConstants {

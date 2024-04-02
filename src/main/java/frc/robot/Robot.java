@@ -8,6 +8,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import java.io.File;
@@ -58,6 +59,7 @@ public class Robot extends TimedRobot
     // Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
     // immediately when disabled, but then also let it be pushed more 
     disabledTimer = new Timer();
+    m_robotContainer.climber.zeroEncoders();
   }
 
   /**
@@ -75,6 +77,7 @@ public class Robot extends TimedRobot
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+    SmartDashboard.putNumber("Elevator", m_robotContainer.climber.getClimberPosition());
   }
 
   /**
@@ -104,7 +107,7 @@ public class Robot extends TimedRobot
   @Override
   public void autonomousInit()
   {
-    m_robotContainer.setMotorBrake(true);
+    m_robotContainer.setMotorBrake(false);
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -134,8 +137,9 @@ public class Robot extends TimedRobot
       m_autonomousCommand.cancel();
     }
     m_robotContainer.setDriveMode();
-    m_robotContainer.climber.zeroEncoders();
-    m_robotContainer.setMotorBrake(true);
+    
+    m_robotContainer.intake.zeroEncoders();
+    m_robotContainer.setMotorBrake(false);
   }
 
   /**

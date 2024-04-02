@@ -13,7 +13,7 @@ public class DescendCommand extends Command {
     public DescendCommand(ClimberSubsystem climberSubsystem) {
         // each subsystem used by the command must be passed into the
         // addRequirements() method (which takes a vararg of Subsystem)
-        addRequirements(climberSubsystem);
+        //addRequirements(climberSubsystem);
         this.climberSubsystem=climberSubsystem;
     }
 
@@ -22,12 +22,6 @@ public class DescendCommand extends Command {
         climberSubsystem.descend();
     }
 
-
-
-    @Override
-    public void end(boolean interrupted) {
-        climberSubsystem.stop();
-    }
     @Override
     public boolean isFinished(){
         if(climberSubsystem.getClimberPosition()<=Constants.MotorConstants.LOWER_STOP_POINT)
@@ -37,5 +31,12 @@ public class DescendCommand extends Command {
         {
             return false;
         }
+    }
+
+
+    @Override
+    public void end(boolean interrupted) {
+        climberSubsystem.stop();
+        
     }
 }

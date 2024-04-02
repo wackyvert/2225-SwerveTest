@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import edu.wpi.first.math.controller.PIDController;
@@ -12,14 +13,11 @@ import frc.robot.Constants;
 public class ShooterSubsystem extends SubsystemBase {
 
 
-
+    private final TalonSRX trapMotor = new TalonSRX(15);
 
     // Shooter motors
-    private final CANSparkMax shooterMotor1 = new CANSparkMax(Constants.MotorConstants.SHOOTER_L_ID, CANSparkMax.MotorType.kBrushless);
-    private final CANSparkMax shooterMotor2 = new CANSparkMax(Constants.MotorConstants.SHOOTER_R_ID, CANSparkMax.MotorType.kBrushless);
-
-    // Feeder motor
-    private final TalonSRX feederMotor = new TalonSRX(Constants.MotorConstants.SHOOTER_LOADER_ID);
+    private final CANSparkFlex shooterMotor1 = new CANSparkFlex(Constants.MotorConstants.SHOOTER_L_ID, CANSparkFlex.MotorType.kBrushless);
+    private final CANSparkFlex shooterMotor2 = new CANSparkFlex(Constants.MotorConstants.SHOOTER_R_ID, CANSparkFlex.MotorType.kBrushless);
 
     // Encoders
 
@@ -42,7 +40,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
 
-    public boolean readyToFire(CANSparkMax shooterMotor)
+    public boolean readyToFire(CANSparkFlex shooterMotor)
     {
         double tolerance = 100;
         double actualVelocity = getEncoderSpeed(shooterMotor);
@@ -54,24 +52,33 @@ public class ShooterSubsystem extends SubsystemBase {
             // Velocity is out of range
         }
     }
+    public void runTrapMotor(){
+        trapMotor.set(ControlMode.PercentOutput, 0.7);
+    }
+    public void stopTrapMotor(){
+             trapMotor.set(ControlMode.PercentOutput, .0);
+   
+    } 
     public void shoot() {
         shooterMotor1.set(-.9);
         shooterMotor2.set(.9);
-        feed();
+        
+    }
+    public void shootSlow() {
+        shooterMotor1.set(-.17);
+        shooterMotor2.set(.17);
+        
     }
 
     public void stopShooter() {
         shooterMotor1.set(0.0);
         shooterMotor2.set(0.0);
-        feederMotor.set(ControlMode.PercentOutput, 0.0);
     }
 
-    public double getEncoderSpeed(CANSparkMax motor){
+    public double getEncoderSpeed(CANSparkFlex motor){
        return motor.getEncoder().getVelocity();
     }
-    public void feed(){
-        feederMotor.set(ControlMode.PercentOutput, .5);
-    }
+    
 
     @Override
     public void periodic(){
