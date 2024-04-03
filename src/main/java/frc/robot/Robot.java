@@ -11,6 +11,9 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.lights.LightsDefault;
+import frc.robot.subsystems.LightSubsystem.AnimationTypes;
+
 import java.io.File;
 import java.io.IOException;
 import swervelib.parser.SwerveParser;
@@ -86,6 +89,8 @@ public class Robot extends TimedRobot
   @Override
   public void disabledInit()
   {
+     m_robotContainer.lights.changeAnimation(AnimationTypes.Rainbow);
+    
     m_robotContainer.setMotorBrake(true);
     disabledTimer.reset();
     disabledTimer.start();
@@ -99,6 +104,8 @@ public class Robot extends TimedRobot
       m_robotContainer.setMotorBrake(false);
       disabledTimer.stop();
     }
+    //m_robotContainer.lights.changeAnimation(AnimationTypes.Rainbow);
+    
   }
 
   /**
@@ -139,6 +146,7 @@ public class Robot extends TimedRobot
       m_autonomousCommand.cancel();
     }
 
+    m_robotContainer.setDefaultCommand();
     
     m_robotContainer.intake.zeroEncoders();
     m_robotContainer.setMotorBrake(false);

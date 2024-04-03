@@ -5,10 +5,10 @@ import frc.robot.Constants;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 
-public class DropIntake extends Command {
+public class RunIntakeSeq extends Command {
      IntakeSubsystem intakeSubsystem;
 
-    public DropIntake(IntakeSubsystem intakeSubsystem) {
+    public RunIntakeSeq(IntakeSubsystem intakeSubsystem) {
         // each subsystem used by the command must be passed into the
         // addRequirements() method (which takes a vararg of Subsystem)
         addRequirements(intakeSubsystem);
@@ -17,7 +17,7 @@ public class DropIntake extends Command {
 
     @Override
     public void initialize() {
-        intakeSubsystem.dropIntake();
+        intakeSubsystem.intake();
    
     }
     @Override

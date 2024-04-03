@@ -17,27 +17,21 @@ public class RaiseIntake extends Command {
 
     @Override
     public void initialize() {
-        
+        intakeSubsystem.raiseIntake();
     }
-    @Override
+    /*@Override
     public void execute(){
 intakeSubsystem.raiseIntake();
     }
-
+*/
 @Override
     public boolean isFinished(){
-        if(intakeSubsystem.getArmPosition()>=Constants.MotorConstants.UPPER_STOP_POINT)
-        {
-            return true;
-        }else
-        {
-            return false;
-        }
+        return true;
     }
-
+/* */
     @Override
     public void end(boolean interrupted) {
-        intakeSubsystem.stop();
+       // intakeSubsystem.stop();
     }
     
 }

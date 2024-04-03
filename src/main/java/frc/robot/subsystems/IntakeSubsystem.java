@@ -34,18 +34,18 @@ public class IntakeSubsystem extends SubsystemBase {
         return pivot.getSelectedSensorPosition()/2048;
     }
     public void dropIntake(){
-         pivot.set(ControlMode.PercentOutput, -.2);
+         pivot.set(ControlMode.PercentOutput, .4);
             
      }
     public void raiseIntake(){
-      pivot.set(ControlMode.PercentOutput, 0.2);
+      pivot.set(ControlMode.PercentOutput, -.4);
         
     }
     
     public void reverse() {
         // If the limit switch is not engaged, run the motor in reverse
         
-            intakeMotor.set( .2);
+            intakeMotor.set( .4);
         
             
     }

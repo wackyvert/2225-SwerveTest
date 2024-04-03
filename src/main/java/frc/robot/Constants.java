@@ -62,7 +62,7 @@ public final class Constants
   {
 
     public static final PIDConstants TRANSLATION_PID = new PIDConstants(0.7, 0, 0);
-    public static final PIDConstants ANGLE_PID   = new PIDConstants(0.0, 0, 0.00);
+    public static final PIDConstants ANGLE_PID   = new PIDConstants(1.2, 0, 0.00);
   }
 
   public static final class Drivebase
