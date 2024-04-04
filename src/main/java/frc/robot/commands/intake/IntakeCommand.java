@@ -1,14 +1,18 @@
 package frc.robot.commands.intake;
 
+import com.ctre.phoenix.led.Animation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LightSubsystem;
 
 
 public class IntakeCommand extends Command {
     private final IntakeSubsystem intakeSubsystem;
+    private final LightSubsystem lightSubsystem;
 
-    public IntakeCommand(IntakeSubsystem intakeSubsystem) {
+    public IntakeCommand(IntakeSubsystem intakeSubsystem, LightSubsystem lightSubsystem) {
         this.intakeSubsystem = intakeSubsystem;
+        this.lightSubsystem = lightSubsystem;
         // each subsystem used by the command must be passed into the
         // addRequirements() method (which takes a vararg of Subsystem)
         addRequirements(this.intakeSubsystem);
@@ -16,7 +20,8 @@ public class IntakeCommand extends Command {
 
     @Override
     public void initialize() {
-
+       lightSubsystem.turnOnAnimation();
+        lightSubsystem.changeAnimation(LightSubsystem.AnimationTypes.solid_orange_strobe);
     }
 
     @Override
@@ -32,6 +37,9 @@ public class IntakeCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
+
         intakeSubsystem.stop();
+        lightSubsystem.turnOffAnimation();
+        lightSubsystem.setTeamColor();
     }
 }

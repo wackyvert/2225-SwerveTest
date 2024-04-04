@@ -1,30 +1,31 @@
 package frc.robot.commands.shooter;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LightSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
-public class TrapAmpSlowShoot extends Command {
-    private final ShooterSubsystem intakeSubsystem;
+
+public class StopShootCommand extends Command {
+    private final ShooterSubsystem shooterSubsystem;
     private final LightSubsystem lightSubsystem;
-    public TrapAmpSlowShoot(ShooterSubsystem intake, LightSubsystem lightSubsystem) {
-        this.intakeSubsystem = intake;
-        this.lightSubsystem = lightSubsystem;
+
+    public StopShootCommand(ShooterSubsystem shooterSubsystem, LightSubsystem lightSubsystem) {
+        this.shooterSubsystem = shooterSubsystem;
+        this.lightSubsystem=lightSubsystem;
         // each subsystem used by the command must be passed into the
         // addRequirements() method (which takes a vararg of Subsystem)
-        addRequirements(this.intakeSubsystem);
+        addRequirements(this.shooterSubsystem);
     }
 
-    @Override public void initialize(){
-    lightSubsystem.changeAnimation(LightSubsystem.AnimationTypes.solid_green_strobe);
-        lightSubsystem.turnOnAnimation();
+    @Override
+    public void initialize() {
+        shooterSubsystem.stopShooter();
 
     }
 
     @Override
-    public void execute(){
-        intakeSubsystem.shootSlow();
+    public void execute() {
+
     }
 
     @Override
@@ -35,9 +36,8 @@ public class TrapAmpSlowShoot extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        intakeSubsystem.stopShooter();
+        shooterSubsystem.stopShooter();
         lightSubsystem.turnOffAnimation();
         lightSubsystem.setTeamColor();
-        //intakeSubsystem.stopTrapMotor();
     }
 }

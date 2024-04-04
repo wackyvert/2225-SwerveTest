@@ -15,11 +15,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -37,9 +33,7 @@ import frc.robot.commands.intake.StopDrop;
 import frc.robot.commands.intake.StopIntakeSeq;
 import frc.robot.commands.lights.LightsDefault;
 import frc.robot.commands.lights.LightsInRange;
-import frc.robot.commands.shooter.ShootCommand;
-import frc.robot.commands.shooter.TrapAmp;
-import frc.robot.commands.shooter.TrapAmpSlowShoot;
+import frc.robot.commands.shooter.*;
 import frc.robot.commands.swervedrive.drivebase.AbsoluteDriveAdv;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -89,10 +83,12 @@ public class RobotContainer
 
 //    PathPlanner Config
     NamedCommands.registerCommand("RunIntake", new SequentialCommandGroup(new RunIntakeSeq(intake), new WaitCommand(2.0), new StopIntakeSeq(intake)));
-    NamedCommands.registerCommand("ShootCommand", new ParallelCommandGroup(new ShootCommand(shooter), new OutttakeCommand(intake)));
+    NamedCommands.registerCommand("ShootCommand", new ParallelCommandGroup(new ShootCommand(shooter, lights), new OutttakeCommand(intake)));
     NamedCommands.registerCommand("DropIntake", new SequentialCommandGroup(new DropIntake(intake), new WaitCommand(1.8), new StopDrop(intake)));
     NamedCommands.registerCommand("RaiseIntake", new SequentialCommandGroup(new RaiseIntake(intake), new WaitCommand(1.75), new StopDrop(intake)));
-   // climber.zeroEncoders();
+    NamedCommands.registerCommand("StopShootCommand", new ParallelCommandGroup(new StopShootCommand(shooter, lights), new StopIntakeSeq(intake)));//this should interrupt???
+    NamedCommands.registerCommand("StartShootCommand", new ParallelCommandGroup(new StartShootCommand(shooter, lights), new OutttakeCommand(intake)));
+    // climber.zeroEncoders();
     AbsoluteDriveAdv closedAbsoluteDriveAdv = new AbsoluteDriveAdv(drivebase,
             () -> MathUtil.applyDeadband(driverXbox.getLeftY(),
                     OperatorConstants.LEFT_Y_DEADBAND),
@@ -172,12 +168,13 @@ driveFieldOrientedDirectAngle= drivebase.driveCommand(
     new JoystickButton(driverXbox, 4).onTrue(new SequentialCommandGroup(new DropIntake(intake), new WaitCommand(2.7), new StopDrop(intake)));
     new JoystickButton(driverXbox2, 3).whileTrue(new ClimbCommand(climber));
     new JoystickButton(driverXbox2, 4).whileTrue(new DescendCommand(climber));
-    new JoystickButton(driverXbox2, 1).whileTrue(new ShootCommand(shooter));
-    new JoystickButton(driverXbox2, 5).whileTrue(new TrapAmpSlowShoot(shooter));
+    new JoystickButton(driverXbox2, 1).whileTrue(new ShootCommand(shooter, lights));
+    new JoystickButton(driverXbox2, 5).whileTrue(new TrapAmpSlowShoot(shooter, lights));
     new JoystickButton(driverXbox2, 2).whileTrue(new TrapAmp(shooter));
-    new JoystickButton(driverXbox, 1).whileTrue(new IntakeCommand(intake));
+    new JoystickButton(driverXbox, 1).whileTrue(new IntakeCommand(intake, lights));
+    new JoystickButton(driverXbox, 7).onTrue(new InstantCommand(drivebase::zeroGyro));
       new JoystickButton(driverXbox, 2).whileTrue(new OutttakeCommand(intake));
-//    new JoystickButton(driverXbox, 3).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
+    new JoystickButton(driverXbox, 8).whileTrue(new RepeatCommand(new InstantCommand(drivebase::lock, drivebase)));
   }
 
   /**
@@ -190,28 +187,7 @@ driveFieldOrientedDirectAngle= drivebase.driveCommand(
     //return null;
     return drivebase.getAutonomousCommand("New Auto");
   }
-  public double[] convertPOVtoJoystick(){
-    if (driverXbox.getPOV()==-1){
-        return new double[]{0,0};
-    }else if (driverXbox.getPOV()==0){
-        return new double[]{0,.3};
-    }else if (driverXbox.getPOV()==45){
-        return new double[]{.3,.3};
-    }else if (driverXbox.getPOV()==90){
-        return new double[]{.3,0};
-    }else if (driverXbox.getPOV()==135){
-        return new double[]{.3,-.3};
-    }else if (driverXbox.getPOV()==180){
-        return new double[]{0-.3};
-    }else if (driverXbox.getPOV()==225){
-        return new double[]{-.3,-.3};
-    }else if (driverXbox.getPOV()==270){
-        return new double[]{-.3,0};
-    }else if (driverXbox.getPOV()==315){
-        return new double[]{-.3,.3};
-    }
-    else return new double[]{0,0};
-  }
+
 
 
   public void setMotorBrake(boolean brake)

@@ -5,6 +5,7 @@
 package frc.robot;
 
 // import com.pathplanner.lib.server.PathPlannerServer;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -16,6 +17,8 @@ import frc.robot.subsystems.LightSubsystem.AnimationTypes;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
+
 import swervelib.parser.SwerveParser;
 
 /**
@@ -114,7 +117,7 @@ public class Robot extends TimedRobot
   @Override
   public void autonomousInit()
   {
-
+    m_robotContainer.drivebase.zeroGyro();
     m_robotContainer.setMotorBrake(false);
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 //setting here to allow time to grab alliance and invert controls if necessary, yagsl pathplanner bug
@@ -137,6 +140,15 @@ public class Robot extends TimedRobot
   @Override
   public void teleopInit()
   {
+    Optional<DriverStation.Alliance> ally = DriverStation.getAlliance();
+    if (ally.isPresent()) {
+      if (ally.get() == DriverStation.Alliance.Red) {
+        m_robotContainer.drivebase.zeroGyro();
+      }
+
+
+
+
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -151,13 +163,23 @@ public class Robot extends TimedRobot
     m_robotContainer.intake.zeroEncoders();
     m_robotContainer.setMotorBrake(false);
   }
+  }
 
   /**
    * This function is called periodically during operator control.
    */
+
   @Override
   public void teleopPeriodic()
   {
+    double timeRemaining = DriverStation.getMatchTime();
+
+
+    if(timeRemaining <= 30.0&&timeRemaining>=29.0) {
+
+      m_robotContainer.lights.changeAnimation(AnimationTypes.solid_white_strobe);
+
+    }
   }
 
   @Override

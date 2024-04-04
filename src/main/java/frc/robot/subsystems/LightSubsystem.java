@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -17,6 +18,8 @@ import com.ctre.phoenix.led.TwinkleAnimation.TwinklePercent;
 import com.ctre.phoenix.led.TwinkleOffAnimation.TwinkleOffPercent;
 import frc.robot.RobotContainer;
 
+import java.util.Optional;
+
 public class LightSubsystem extends SubsystemBase {
     private final CANdle m_candle = new CANdle(Constants.CANdleID, "rio");
     private final int LedCount = 100;
@@ -25,6 +28,11 @@ public class LightSubsystem extends SubsystemBase {
     private Animation m_toAnimate = null;
 
     public enum AnimationTypes {
+       solid_yellow_strobe,
+        solid_green_strobe,
+        solid_purple_strobe,
+        solid_orange_strobe,
+        solid_white_strobe,
         ColorFlow,
         Fire,
         Larson,
@@ -44,7 +52,7 @@ public class LightSubsystem extends SubsystemBase {
         CANdleConfiguration configAll = new CANdleConfiguration();
        // configAll.statusLedOffWhenActive = true;
         configAll.disableWhenLOS = false;
-        configAll.stripType = LEDStripType.RGB;
+        configAll.stripType = LEDStripType.GRB;
         configAll.brightnessScalar = 1;
        // configAll.vBatOutputMode = VBatOutputMode.Modulated;
         m_candle.configAllSettings(configAll, 100);
@@ -100,6 +108,21 @@ public class LightSubsystem extends SubsystemBase {
 
         switch(toChange)
         {
+            case solid_yellow_strobe:
+                m_toAnimate = new StrobeAnimation(226,255,0);
+                break;
+            case solid_orange_strobe:
+                m_toAnimate = new StrobeAnimation(226,255,0);
+                break;
+            case solid_green_strobe:
+                m_toAnimate = new StrobeAnimation(255,0,0);
+                break;
+            case solid_purple_strobe:
+                m_toAnimate = new StrobeAnimation(154, 0, 255);
+                break;
+            case solid_white_strobe:
+                m_toAnimate = new StrobeAnimation(255, 255, 255);
+                break;
             case ColorFlow:
                 m_toAnimate = new ColorFlowAnimation(128, 20, 70, 0, 0.7, LedCount, Direction.Forward);
                 break;
@@ -133,13 +156,36 @@ public class LightSubsystem extends SubsystemBase {
         }
         System.out.println("Changed to " + m_currentAnimation.toString());
     }
-
+    boolean clearCandle=false;
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-            m_candle.animate(m_toAnimate);
-    }
+            if(!clearCandle){
+                m_candle.animate(m_toAnimate);
+            }
 
+    }
+    public void turnOffAnimation(){
+        clearCandle=true;
+        m_candle.clearAnimation(0);
+    }
+    public void setTeamColor() {
+        Optional<DriverStation.Alliance> ally = DriverStation.getAlliance();
+        if (ally.isPresent()) {
+            if (ally.get() == DriverStation.Alliance.Red) {
+                m_candle.setLEDs(255, 0, 0);
+            } else if (ally.get() == DriverStation.Alliance.Blue) {
+                m_candle.setLEDs(0, 0, 255);
+            }
+        }
+    }
+    public void turnOnAnimation(){
+
+        clearCandle=false;
+    }
+    public Animation getOldAnimation(){
+        return m_toAnimate;
+    }
     @Override
     public void simulationPeriodic() {
         // This method will be called once per scheduler run during simulation

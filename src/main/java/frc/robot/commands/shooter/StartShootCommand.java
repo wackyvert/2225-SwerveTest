@@ -5,11 +5,11 @@ import frc.robot.subsystems.LightSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 
-public class ShootCommand extends Command {
+public class StartShootCommand extends Command {
     private final ShooterSubsystem shooterSubsystem;
     private final LightSubsystem lightSubsystem;
 
-    public ShootCommand(ShooterSubsystem shooterSubsystem, LightSubsystem lightSubsystem) {
+    public StartShootCommand(ShooterSubsystem shooterSubsystem, LightSubsystem lightSubsystem) {
         this.shooterSubsystem = shooterSubsystem;
         this.lightSubsystem=lightSubsystem;
         // each subsystem used by the command must be passed into the
@@ -19,14 +19,15 @@ public class ShootCommand extends Command {
 
     @Override
     public void initialize() {
-        lightSubsystem.turnOnAnimation();
         lightSubsystem.changeAnimation(LightSubsystem.AnimationTypes.solid_purple_strobe);
+        lightSubsystem.turnOnAnimation();
+        shooterSubsystem.shoot();
 
     }
 
     @Override
     public void execute() {
-        shooterSubsystem.shoot();
+
     }
 
     @Override
@@ -37,8 +38,7 @@ public class ShootCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        shooterSubsystem.stopShooter();
-        lightSubsystem.turnOffAnimation();
-        lightSubsystem.setTeamColor();
+
+
     }
 }
