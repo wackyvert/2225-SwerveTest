@@ -92,7 +92,7 @@ public class Robot extends TimedRobot
   @Override
   public void disabledInit()
   {
-     m_robotContainer.lights.changeAnimation(AnimationTypes.Rainbow);
+    // m_robotContainer.lights.changeAnimation(AnimationTypes.Rainbow);
     
     m_robotContainer.setMotorBrake(true);
     disabledTimer.reset();

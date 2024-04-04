@@ -115,10 +115,10 @@ public class LightSubsystem extends SubsystemBase {
                 m_toAnimate = new StrobeAnimation(226,255,0);
                 break;
             case solid_green_strobe:
-                m_toAnimate = new StrobeAnimation(255,0,0);
+                m_toAnimate = new StrobeAnimation(255, 0,0, 0, .8, LedCount);
                 break;
             case solid_purple_strobe:
-                m_toAnimate = new StrobeAnimation(154, 0, 255);
+                m_toAnimate = new StrobeAnimation(154, 0, 255, 0, .8, LedCount);
                 break;
             case solid_white_strobe:
                 m_toAnimate = new StrobeAnimation(255, 255, 255);
